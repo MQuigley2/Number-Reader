@@ -59,6 +59,7 @@ def clipImage(image):
     
   return image[clippedTop:clippedBottom+1,clippedLeft:clippedRight+1]
 
+#defining function to convert tkinter canvas to 28 by 28 numpy array
 def imageConverter(canvas):
     canvasArray=skimage.io.imread(canvas,as_gray=True)
     clippedCanvas=clipImage(1-canvasArray)
@@ -67,4 +68,3 @@ def imageConverter(canvas):
     if np.amax(image)>0:
         image=image/np.amax(image)
     return image
-#defining function to convert tkinter canvas to 28 by 28 numpy array
