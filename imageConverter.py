@@ -9,16 +9,19 @@ def findTopRow(image):
     if sum(image[i,:])>0:
       return i
   return 0
+  
 def findBottomRow(image):
   for i in range(image.shape[0]):
     if sum(image[image.shape[0]-i-1,:])>0:
       return image.shape[0]-i-1
   return image.shape[0]-1
+  
 def findFirstColumn(image):
   for i in range(image.shape[1]):
     if sum(image[:,i])>0:
       return i
   return 0
+  
 def findLastColumn(image):
   for i in range(image.shape[1]):
     if sum(image[:,image.shape[1]-i-1])>0:
@@ -34,6 +37,7 @@ def clipImage(image):
   width=min(min(image.shape),width*1.1)
   centerVert=(top+bottom)/2
   centerHor=(right+left)/2
+  
   if centerVert-(width/2)<0:
     clippedTop=0
     clippedBottom=math.ceil(width)
@@ -52,6 +56,7 @@ def clipImage(image):
   else:
     clippedLeft=math.floor(centerHor-(width/2))
     clippedRight=math.ceil(centerHor+(width/2))
+    
   return image[clippedTop:clippedBottom+1,clippedLeft:clippedRight+1]
 
 def imageConverter(canvas):
