@@ -4,7 +4,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from imageConverter import imageConverter
-#importing necessary library
+#importing necessary library (In my expierence a comment should come before the line of code the comment is referencing. Looks like this
+# might apply to most of your comments. -GF)
 
 
 
@@ -12,21 +13,29 @@ digitModel= load_model('models/trainedModel')
 #Loading Pre-Trained model for digit classification
 
 
-#Function Definitions
-#===========================================================================
+#Function Definitions                                                       (This comment is
+#=========================================================================== unecessary in my opinion. )
 
 
 
 def locate_xy(event):
     global Coordinates
     Coordinates=[event.x,event.y]
-#Function takes coordinates of mouse when canvas is clicked and addes them to a list
+#Function takes coordinates of mouse when canvas is clicked and addes them to a list 
+# Doesnt look like line 23 is adding something to a list. This intializes a new array with two elements, events.x and events.y.
 
 def draw(event):
     global Coordinates
+    # if len(Coordinates) == 6:
+    #   Coordinates.pop(0)
+    #   Coordinates.pop(0)
     Coordinates.append(event.x)
     Coordinates.append(event.y)
     canvas.create_line((Coordinates),width=thicknessScale.get()*3,fill=chooseColor.get().lower(),smooth=True)
+    # For something like this I would prefer something like my comment on line 29 then a while loop.
+    # I think the logic is correct here but as general rule it might be good to avoid loops if you
+    # don't have too. Sometimes you can get an infinite loop bug if your logic is messed up and those
+    # are tricky to debug. Just a rule of thumb though.
     while len(Coordinates)>6:
         Coordinates.pop(0)
 #Function appends new mouse coordinates to list as mouse moves and creates a smooth line between points
