@@ -4,24 +4,20 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from imageConverter import imageConverter
-#importing necessary library
 
 
-
-digitModel= load_model('models/trainedModel')
 #Loading Pre-Trained model for digit classification
+digitModel= load_model('models/trainedDigitModel')
 
 
-#Function Definitions
-#===========================================================================
-
-
-
+#Function initializes Coordinates list with mouse coordinates when canvas is clicked 
 def locate_xy(event):
     global Coordinates
     Coordinates=[event.x,event.y]
-#Function takes coordinates of mouse when canvas is clicked and addes them to a list
 
+
+#Function appends new mouse coordinates to list as mouse moves and creates a smooth line between points
+#Only retains 3 most recent mouse location to prevent slowdown from creating too many objects
 def draw(event):
     global Coordinates
     Coordinates.append(event.x)
@@ -29,15 +25,16 @@ def draw(event):
     canvas.create_line((Coordinates),width=thicknessScale.get()*3,fill=chooseColor.get().lower(),smooth=True)
     while len(Coordinates)>6:
         Coordinates.pop(0)
-#Function appends new mouse coordinates to list as mouse moves and creates a smooth line between points
-#Only retains 3 most recent mouse location to prevent slowdown from creating too many objects
 
 
-def clearScreen():
+#defining function to clear screen
+#Function needs to accept an acgument for it to be bound to key
+def clearScreen(event=0):
     canvas.delete("all")
     resultString.set("Draw a Number between 0 and 9")
-#defining function to clear screen
 
+
+#Function takes prediction array and picks a message to display to user
 def displayPredictionString(prediction):
     firstGuess=np.argmax(prediction)
     firstGuessVal=np.amax(prediction)
@@ -57,47 +54,44 @@ def displayPredictionString(prediction):
         resultString.set('I think you drew a '+str(firstGuess)+' but it might be a '+str(secondGuess)+' or a '+str(thirdGuess)+'.')
 
 
-
+#Function feeds converts canvas to array, feeds it into model and displays 
+#prediction string
 def evaluateCanvas(event=0):
     canvas.postscript(file='canvas.eps',colormode="gray")
     image=imageConverter('canvas.eps')
     Prediction=digitModel.predict(np.reshape(image,(1,28,28,1)))
     numPrediction=np.argmax(Prediction)
-    print(Prediction)
     displayPredictionString(Prediction)
-
-
 
 
 #initializing Tkinter widgets
 #===========================================================================
 
 
+#Initializing window
 window=tk.Tk()
 window.title('Paint')
 window.state('normal')
 window.configure(bg='#404040')
-window.option_add('*tearOff',False)
-#creating window
 
 
+#Creating toolbar to hold other widgets
+toolBar=tk.Frame(window,relief='raised',borderwidth=2)
 
-toolBar=tk.Frame(window,relief='raised',borderwidth=2,width=800)
 
-
-
+#Creating canvas on which the user can draw
 canvas=tk.Canvas(window,height=600,width=600)
 canvas.configure(bg='white')
 clear=tk.Button(toolBar, text="Clear All", command=clearScreen)
 
 
-
+#Creating thickness slider
 thickness=tk.Frame(toolBar)
 thicknessLabel=tk.Label(thickness,text='Thickness')
 thicknessScale=tk.Scale(thickness,from_=1,to=10,orient='horizontal')
 
 
-
+#Creating color choice menu
 chooseColor=tk.StringVar()
 colors=["Black",
         "White",
@@ -112,9 +106,11 @@ chooseColor.set(colors[0])
 colorMenu=tk.OptionMenu(toolBar,chooseColor,*colors)
 
 
+#Creating evaluation button
 evaluate=tk.Button(toolBar, text="Evaluate",command=evaluateCanvas)
 
 
+#Creating results display
 resultString=tk.StringVar()
 resultString.set("Draw a Number between 0 and 9")
 result=tk.Message(toolBar,textvariable=resultString, aspect=250)
@@ -123,25 +119,35 @@ result=tk.Message(toolBar,textvariable=resultString, aspect=250)
 #Placing widgets on grid
 #===========================================================================
 
+
+#Placing base widgets onto window
 toolBar.grid(row=0,column=0,sticky='nwe')
 canvas.grid(row=1,column=0)
 
+
+#Placing widgets on toolbar
 clear.grid(row=0,column=0,sticky='news')
 thickness.grid(row=0,column=1,sticky='news')
 colorMenu.grid(row=0,column=2,sticky='news')
 evaluate.grid(row=0,column=3,sticky='news')
 result.grid(row=0,column=4,sticky='news')
 
+
+#Placing widgets onto thickness frame
 thicknessLabel.grid(row=0, column=0)
 thicknessScale.grid(row=1,column=0)
+
 
 #Binding Keys
 #===========================================================================
 
+
+#binding drawing functions to mouse
 canvas.bind('<Button-1>',locate_xy)
 canvas.bind('<B1-Motion>',draw)
-#binding drawing functions to mouse
 
+
+#Binding clear and evaluate commands to keyboard shortcuts
 window.bind('<Return>',evaluateCanvas)
 window.bind('c',clearScreen)
 
