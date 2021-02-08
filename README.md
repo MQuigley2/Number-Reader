@@ -17,7 +17,7 @@ scikit-image's io module is used to transform Tkinter canvas into NumPy array.
 
 ## Method
 
-The model was trained on the publicly available MNIST dataset. The data set was split into a training and validation set with 3600 of 42000 data point being included in the validation set.
+The model was trained on the publicly available MNIST dataset. Data was acquired from [kaggle](https://www.kaggle.com/c/digit-recognizer/data). The data set was split into a training and validation set with 3600 of 42000 data point being included in the validation set.
 
 The model consists of two Convolutional layers, followed by pooling and dropout layers, which feed into a second set of two Convolutional layers followed by pooling and dropout layers. The data is then flattened and passes through a single fully connected layer and a final dropout layer before it reaches the output layer.  Initial tests used a low dropout rate of 0.1, but this failed to prevent overfitting. The dropout rate was increased to 0.3, which solved overfitting issues. Initial tests also included a second fully connected layer and used more features, but this did not seem to improve performance and only slowed down training.
 
